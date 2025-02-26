@@ -32,4 +32,12 @@ As we parsed through the repository, we—like the repo itself—categorized res
 - **Greenhouse Gas Emissions per 1,000 Kilocalories** – Same as above.  
 - **Hockeystick (R Package)** – Same as above.  
 - **How Many Gigatons of Carbon Dioxide...?** – Same as above.  
-- **CO₂ and Greenhouse Gas Emissions** – Same as above.  
+- **CO₂ and Greenhouse Gas Emissions** – Same as above.
+
+# Climate Data Review: Entry 2
+## Potential Questions to Answer:
+- US vs. rest of the world (and based on election)
+- US across presidencies
+- State by state across elections
+- County by county across elections
+- Assuming endogenous values, the state of the US in 20 years...
