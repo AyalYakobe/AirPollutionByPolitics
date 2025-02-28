@@ -48,3 +48,9 @@ As we parsed through the repository, we—like the repo itself—categorized res
 - From what it seems, our project has pivoted such that it now:
   - Investigates airpollution across countries across time
   - Find countries that have a steady politics, where party changes are rare, juxtapose those with countries where parties change off. See if there's a fluctuation in the increase in airpllution in those regions and use an unsupervised method to narrow it down to political affiliation.
+ 
+# Climate Data Review: Entry 4 
+- finished collecting data
+- Found alot of state and county US election data
+- Found alot of air pollution data on a state level
+- Now I'm going to scope the project to the national instead of international level because of the wealth of data I was able to find
