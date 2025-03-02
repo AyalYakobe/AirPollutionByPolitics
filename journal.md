@@ -54,3 +54,11 @@ As we parsed through the repository, we—like the repo itself—categorized res
 - Found alot of state and county US election data
 - Found alot of air pollution data on a state level
 - Now I'm going to scope the project to the national instead of international level because of the wealth of data I was able to find
+
+# Climate Data Review: Entry 5
+- Found historical election data of the house, senate, and presidency
+- Going to combine these three into an index based on party
+- Then I'm going to track the index score overtime and find the most extreme - flip-flop states, and the most extremely steady states, and the average
+- Then I'm going to layer with climate data and see if a higher score indicates higher pollution. How much can we expect on average?
+- Assuming the same trends in these states, how much pollution can we expect in the fututure?
+- Can we then create a graph and see if neighboring states' ploitcal association has an effect on it's surroundings? This will have to include proximity and size of these states as variables
