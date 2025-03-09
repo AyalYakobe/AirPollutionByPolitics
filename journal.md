@@ -62,3 +62,11 @@ As we parsed through the repository, we—like the repo itself—categorized res
 - Then I'm going to layer with climate data and see if a higher score indicates higher pollution. How much can we expect on average?
 - Assuming the same trends in these states, how much pollution can we expect in the fututure?
 - Can we then create a graph and see if neighboring states' ploitcal association has an effect on it's surroundings? This will have to include proximity and size of these states as variables
+
+# Climate Data Review: Entry 6
+- graphed the top ten and bottom ten carbon emitting states
+- noticing that (obviously) population and state size play a large role
+- to respind to this, I downloaded population and state size data (took a suprisingly long time to find)
+- merged all this data into one dataframe that I'll run multivariate regression from
+- I'm also trying to upload all my data to github but it's 15G so I'm trying to actually upload it to GoogleDrive and supply the link to github. This I've run through the terminal with notes and has so far taken 2 days for 2G. Assuming 1G a day, I think this will take me two weeks...
+- Added a .gitignore file so it wont upload the data folder
