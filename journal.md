@@ -70,3 +70,7 @@ As we parsed through the repository, we—like the repo itself—categorized res
 - merged all this data into one dataframe that I'll run multivariate regression from
 - I'm also trying to upload all my data to github but it's 15G so I'm trying to actually upload it to GoogleDrive and supply the link to github. This I've run through the terminal with notes and has so far taken 2 days for 2G. Assuming 1G a day, I think this will take me two weeks...
 - Added a .gitignore file so it wont upload the data folder
+
+- # Climate Data Review: Entry 7
+- data almost done upload
+- busy last week. will have a lot of time this coming week
