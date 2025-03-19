@@ -74,3 +74,7 @@ As we parsed through the repository, we—like the repo itself—categorized res
 - # Climate Data Review: Entry 7
 - data almost done upload
 - busy last week. will have a lot of time this coming week
+
+- - # Climate Data Review: Entry 8
+- data ALMOST DONE: 12GB / 14 GB uploaded
+- began working on creating a metric for score legilsation. this includes the percent vote a bill recived and wehther it was climate related.
