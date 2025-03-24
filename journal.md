@@ -75,6 +75,13 @@ As we parsed through the repository, we—like the repo itself—categorized res
 - data almost done upload
 - busy last week. will have a lot of time this coming week
 
-- - # Climate Data Review: Entry 8
+- # Climate Data Review: Entry 8
 - data ALMOST DONE: 12GB / 14 GB uploaded
 - began working on creating a metric for score legilsation. this includes the percent vote a bill recived and wehther it was climate related.
+
+- # Climate Data Review: Entry 9
+- Data all uploaded
+- all steps completed (badly - need to improve them) except adjacency graph
+- making meetings with the TAs discuss further steps and:
+  - Impute data? Using KNN?
+  - Normalize data?
