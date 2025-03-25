@@ -85,3 +85,7 @@ As we parsed through the repository, we—like the repo itself—categorized res
 - making meetings with the TAs discuss further steps and:
   - Impute data? Using KNN?
   - Normalize data?
+  - 
+-  # Climate Data Review: Entry 10
+- Met with Judah today to discuss project
+- Making corrections regarding time series analysis
