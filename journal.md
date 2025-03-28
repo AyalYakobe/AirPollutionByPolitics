@@ -89,3 +89,8 @@ As we parsed through the repository, we—like the repo itself—categorized res
 -  # Climate Data Review: Entry 10
 - Met with Judah today to discuss project
 - Making corrections regarding time series analysis
+
+-  # Climate Data Review: Entry 11
+- group meeting to discuss progress
+- fixed minor bugs and discussed imputation process
+- will need to fix some graphs and some data deletion that has been noticed
