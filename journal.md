@@ -94,3 +94,7 @@ As we parsed through the repository, we—like the repo itself—categorized res
 - group meeting to discuss progress
 - fixed minor bugs and discussed imputation process
 - will need to fix some graphs and some data deletion that has been noticed
+
+-  # Climate Data Review: Entry 12
+- fixed minor bugs
+- fixed a bug that wouldn't show correct party affiliation score on line graph
