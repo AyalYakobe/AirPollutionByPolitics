@@ -98,3 +98,6 @@ As we parsed through the repository, we—like the repo itself—categorized res
 -  # Climate Data Review: Entry 12
 - fixed minor bugs
 - fixed a bug that wouldn't show correct party affiliation score on line graph
+
+-  # Climate Data Review: Entry 13
+- cleaned up code and organized a bit more in preparation for writing the full research paper
