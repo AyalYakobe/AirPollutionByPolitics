@@ -1,0 +1,3 @@
+Below is the link to data we used for this project. It's ~14 GB and therefore could not be uploaded to Github. Instead we
+uploaded it to GoogleDrive and can be accessed via LionMail:
+https://drive.google.com/drive/folders/1JSnVLRutb3KqvyuO4WTsJnKSgkxcPpxM?usp=drive_link
