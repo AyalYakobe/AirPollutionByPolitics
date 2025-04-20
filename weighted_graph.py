@@ -2,99 +2,111 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
-import random
-def gen_data(states, months):
-    d = {}
-    for s in states:
-        b = random.uniform(40,80)
-        svals = [np.sin(2*np.pi*m/12)*random.uniform(5,15) for m in range(months)]
-        nvals = np.random.normal(0,2,months)
-        d[s] = [b + svals[m] + nvals[m] for m in range(months)]
-    return pd.DataFrame(d, index=[f"Month_{i+1}" for i in range(months)])
-def sim_matrix(df):
-    return df.T.corr()
-def build_graph(corr, thr):
-    G = nx.Graph()
-    for s in corr.columns:
+from pathlib import Path
+
+
+META_CSV = "state_meta.csv"          # columns: state,pop,area
+STATES   = pd.read_csv(META_CSV)["state"].tolist()
+
+# minimal contiguous‑border map (add AK–HI self‑loops later)
+BORDERS = {
+    "Alabama": ["Florida","Georgia","Mississippi","Tennessee"],
+    "Alaska":  [],
+    # … (fill out all 51) …
+    "Wyoming": ["Colorado","Idaho","Montana","Nebraska","South Dakota","Utah"]
+}
+
+
+def build_weight_matrix(meta, γ1=1.0, γ2=1.0, ε=1e-4):
+    """
+    meta : DataFrame with index=state, columns=['pop','area']
+    returns: W (N×N) row‑stochastic, C (binary contiguity)
+    """
+    states = meta.index.tolist()
+    N      = len(states)
+    pop    = np.log(meta["pop"].values)     
+    area   = meta["area"].values
+
+    σ_pop  = pop.std()
+    σ_area = area.std()
+
+    C = np.zeros((N, N))
+    for i,s in enumerate(states):
+        for t in BORDERS.get(s, []):
+            j = states.index(t)
+            C[i,j] = C[j,i] = 1
+    np.fill_diagonal(C, 0)
+
+    W = np.zeros_like(C, dtype=float)
+    for i in range(N):
+        for j in range(i+1, N):
+            if C[i,j]:
+                diff_pop  = abs(pop[i]-pop[j]) / σ_pop
+                diff_area = abs(area[i]-area[j]) / σ_area
+                w = np.exp(-γ1*diff_pop**2 - γ2*diff_area**2)
+                W[i,j] = W[j,i] = w
+
+    W += ε
+    row_sum = W.sum(axis=1, keepdims=True)
+    W      /= row_sum
+    return W, C
+
+def to_networkx(W, states):
+    G = nx.DiGraph()                    
+    for i,s in enumerate(states):
         G.add_node(s)
-    for i in range(len(corr.columns)):
-        for j in range(i+1, len(corr.columns)):
-            s1 = corr.columns[i]
-            s2 = corr.columns[j]
-            w = corr.iloc[i, j]
-            if abs(w) >= thr:
-                G.add_edge(s1, s2, weight=w)
+    for i in range(len(states)):
+        for j in range(len(states)):
+            if i != j:
+                G.add_edge(states[i], states[j], weight=float(W[i,j]))
     return G
-def norm_graph(G):
-    ws = [abs(G[u][v]["weight"]) for u, v in G.edges()]
-    if ws:
-        mi, ma = min(ws), max(ws)
-        for u, v in G.edges():
-            w = abs(G[u][v]["weight"])
-            norm = (w - mi)/(ma - mi) if ma != mi else 1
-            G[u][v]["norm"] = norm
-    return G
-def cluster(G):
-    try:
-        import community as community_louvain
-        return community_louvain.best_partition(G)
-    except:
-        return {n:0 for n in G.nodes()}
-def plot_graph(G, part):
+
+
+def laplacian_regression(X, y, W, lamb=1.0):
+    """
+    Solve  (XᵀX + λ Xᵀ L X) β = Xᵀ y   where L=D-W.
+    """
+    D    = np.diag(W.sum(1))
+    L    = D - W
+    XtX  = X.T @ X
+    A    = XtX + lamb * (X.T @ L @ X)
+    b    = X.T @ y
+    β    = np.linalg.solve(A, b)
+    return β
+
+
+def synth_emissions(states, years=10, seed=0):
+    rng   = np.random.default_rng(seed)
+    base  = rng.uniform(2.5, 5.0, len(states))          # baseline log‑CO₂
+    trend = rng.normal(0, 0.01, len(states))            # small drift
+    Y     = {}
+    for t in range(years):
+        noise = rng.normal(0, 0.05, len(states))
+        Y[1970+t] = np.exp(base + trend*t + noise)      # convert back
+    return pd.DataFrame(Y, index=states).T
+
+def main():
+    meta = pd.read_csv(META_CSV, index_col="state")
+    W,_  = build_weight_matrix(meta)
+    G    = to_networkx(W, meta.index.tolist())
+
+    X = np.column_stack([
+        np.ones(len(meta)),
+        np.log(meta["pop"].values),
+        meta["area"].values
+    ])
+    emissions = synth_emissions(STATES).iloc[-1].values  
+    β = laplacian_regression(X, emissions, W, lamb=1.0)
+    print("β̂ (Laplacian‑regularised):", β.round(4))
+
+    #quick visual
     pos = nx.spring_layout(G, seed=42)
-    clust = set(part.values())
-    colors = {c: plt.cm.get_cmap("tab20")(i/len(clust)) for i, c in enumerate(clust)}
-    ncol = [colors[part[n]] for n in G.nodes()]
-    plt.figure(figsize=(10,8))
-    nx.draw(G, pos, node_color=ncol, with_labels=True, node_size=600)
-    elabels = {(u, v): f"{G[u][v]['weight']:.2f}" for u, v in G.edges()}
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=elabels)
-    plt.title("US States Climate Dependency")
+    nx.draw(G, pos, node_size=300, alpha=0.7,
+            edge_color=[G[u][v]['weight'] for u,v in G.edges()],
+            edge_cmap=plt.cm.Blues, with_labels=True)
+    plt.title("Row‑stochastic weight graph")
     plt.axis("off")
     plt.show()
-def plot_hist(G):
-    ws = [abs(G[u][v]["weight"]) for u, v in G.edges()]
-    plt.figure(figsize=(6,4))
-    plt.hist(ws, bins=10, color="gray", edgecolor="black")
-    plt.title("Edge Weight Distribution")
-    plt.xlabel("Correlation")
-    plt.ylabel("Frequency")
-    plt.show()
-def plot_clusters(part):
-    inv = {}
-    for n, c in part.items():
-        inv.setdefault(c, []).append(n)
-    clusters = list(inv.values())
-    sizes = [len(c) for c in clusters]
-    plt.figure(figsize=(8,6))
-    plt.bar(range(len(sizes)), sizes, color="skyblue")
-    plt.title("Cluster Sizes")
-    plt.xlabel("Cluster")
-    plt.ylabel("Count")
-    plt.show()
-def main():
-    states = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]
-    months = 12
-    df = gen_data(states, months)
-    corr = sim_matrix(df)
-    G = build_graph(corr, 0.8)
-    G = norm_graph(G)
-    part = cluster(G)
-    plot_graph(G, part)
-    plot_hist(G)
-    plot_clusters(part)
-    summary = corr.describe()
-    summary.to_csv("climate_summary.csv")
-    df.to_csv("synthetic_climate_data.csv")
-    fig = plt.figure(figsize=(10,6))
-    ax = fig.add_subplot(111)
-    sample_col = df.columns[random.randint(0, len(df.columns)-1)]
-    ax.plot(df.index, df[sample_col].values, marker="o", linestyle="-")
-    ax.set_title("Sample Trend " + sample_col)
-    ax.set_xlabel("Time")
-    ax.set_ylabel("Temperature")
-    plt.show()
+
 if __name__ == "__main__":
     main()
-print("Graph analysis complete.")
-print("Data saved as CSV.")
