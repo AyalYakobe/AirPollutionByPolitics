@@ -104,4 +104,9 @@ As we parsed through the repository, we—like the repo itself—categorized res
 
 -  # Climate Data Review: Entry 14
 - organized files properly
-- Added data link
+- Added data link details
+
+-  # Climate Data Review: Entry 15
+- Added data link details
+- standardized the unsupervised models only
+- added additionaly graphs for clarity
