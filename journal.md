@@ -110,3 +110,8 @@ As we parsed through the repository, we—like the repo itself—categorized res
 - Added data link details
 - standardized the unsupervised models only
 - added additionaly graphs for clarity
+
+-  # Climate Data Review: Entry 16
+- implementing changes from Professor, Judah, Nicolas
+- Fixed logsitic regression to include downsampling
+- included adjacency graphs
